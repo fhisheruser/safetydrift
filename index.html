@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-family:system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>DriftWatch</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..700&family=Figtree:wght@400;500;600&display=swap">
+<style>
+/* One calm column: explain, then a three-beat demo (break something, watch four meters, read the answer).
+   Cool paper, ink text, one teal accent; each cause keeps its own colour-blind-safe hue. */
+:root{
+  --bg:#F3F5F6; --surface:#FBFCFC; --ink:#17212B; --ink2:#53616D; --line:#D5DBE0; --soft:#E8ECEE;
+  --accent:#0B6B86; --on-accent:#FFFFFF; --bad:#B42318; --good:#16794A;
+  --c-model:#0072B2; --c-context:#D55E00; --c-pop:#008F68; --c-meas:#B04A8B;
+  --f-head:'Bricolage Grotesque','Segoe UI',system-ui,Arial,sans-serif; --f-body:'Figtree',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){color-scheme:dark;
+    --bg:#0F1A23; --surface:#16242F; --ink:#E6EDF3; --ink2:#9FB1C0; --line:#2C3D4B; --soft:#1C2D3A;
+    --accent:#62C3E0; --on-accent:#06202A; --bad:#FF8A7A; --good:#5FD39A;
+    --c-model:#56B4E9; --c-context:#F59E5B; --c-pop:#3DD6A0; --c-meas:#E58BC4}
+}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#0F1A23; --surface:#16242F; --ink:#E6EDF3; --ink2:#9FB1C0; --line:#2C3D4B; --soft:#1C2D3A;
+  --accent:#62C3E0; --on-accent:#06202A; --bad:#FF8A7A; --good:#5FD39A;
+  --c-model:#56B4E9; --c-context:#F59E5B; --c-pop:#3DD6A0; --c-meas:#E58BC4}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 var(--f-body);
+  padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px));padding-block:20px 56px}
+.col{max-width:820px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-head);font-weight:600;margin:0;text-wrap:balance;letter-spacing:-.01em}
+p{margin:0}
+a{color:var(--accent)}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.bar{display:flex;justify-content:space-between;align-items:center;padding-block:4px 44px}
+.logo{font:600 22px var(--f-head);letter-spacing:-.02em;display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--ink)}
+.logo svg{display:block}
+.hero h1{font-size:clamp(36px,6.4vw,60px);line-height:1.04;max-width:15ch}
+.u{background:linear-gradient(transparent 62%,color-mix(in srgb,var(--accent) 28%,transparent) 62% 90%,transparent 90%);padding:0 .08em}
+.sub{margin-top:20px;max-width:56ch;font-size:19px;color:var(--ink2)}
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:44px;padding-top:28px;border-top:1px solid var(--line)}
+.how p{color:var(--ink2);font-size:16px}.how b{display:block;color:var(--ink);font:600 18px var(--f-head);margin-bottom:4px}
+section.demo{margin-top:80px;padding-top:44px;border-top:2px solid var(--ink);display:flex;flex-direction:column;gap:32px}
+.demo h2{font-size:36px;line-height:1.1}
+.story{margin-top:12px;max-width:58ch;font-size:19px;color:var(--ink2)}
+.story b{color:var(--ink);font-weight:600}
+.step{display:flex;flex-direction:column;gap:12px}
+.step h3{font:600 20px var(--f-head);display:flex;align-items:center;gap:10px}
+.step h3 span{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--bg);font:600 15px var(--f-body)}
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.opt{text-align:left;padding:14px 16px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);display:flex;flex-direction:column;gap:2px}
+.opt b{font:600 18px var(--f-head)}.opt span{font-size:15px;color:var(--ink2);line-height:1.4}
+.opt:hover{border-color:var(--ink2)}
+.opt[aria-checked="true"]{border-color:var(--accent);box-shadow:0 0 0 1.5px var(--accent) inset}
+.none{background:none;border:0;padding:4px 2px;color:var(--ink2);text-decoration:underline;text-underline-offset:3px;font-size:15px;align-self:flex-start}
+.none[aria-checked="true"]{color:var(--accent);font-weight:600}
+.go{align-self:flex-start;background:var(--accent);color:var(--on-accent);border:0;border-radius:10px;padding:14px 30px;font:600 18px var(--f-body)}
+.go:hover{filter:brightness(1.08)}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:22px}
+.status h3{font-size:30px;line-height:1.15}
+.status p{color:var(--ink2);margin-top:4px;min-height:1.6em}
+.meters{display:flex;flex-direction:column;gap:16px}
+.meter{display:grid;grid-template-columns:minmax(190px,270px) 1fr 120px;gap:8px 16px;align-items:center;transition:opacity .25s}
+.meter.dim{opacity:.4}
+.mq{font-weight:500}
+.mt{height:16px;border-radius:8px;background:var(--soft);overflow:hidden}
+.mt i{display:block;height:100%;width:0;border-radius:8px}
+.ms{font-size:15px;color:var(--ink2);text-align:right}
+.meter.hit .ms{color:var(--bad);font-weight:600}
+.meter.win .mq{font-weight:600}
+.timeline{display:flex;flex-direction:column;gap:6px}
+.prog{position:relative;height:6px;background:var(--soft);border-radius:3px}
+.prog i{position:absolute;inset:0 auto 0 0;display:block;border-radius:3px;background:var(--ink2);width:0}
+.prog u{position:absolute;top:-5px;width:2px;height:16px;background:var(--ink);left:33.33%}
+.tl{display:flex;justify-content:space-between;gap:12px;font-size:14px;color:var(--ink2)}
+.result{border-top:2px solid var(--ink);padding-top:22px;display:flex;flex-direction:column;gap:20px}
+.result h3{font-size:34px;line-height:1.1}
+.result .what{color:var(--ink2);margin-top:6px;font-size:18px}
+.fix{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.fix h4{margin:0 0 4px;font:600 14px var(--f-body);color:var(--ink2)}
+.fix p{font-size:17px}
+.meta{display:flex;flex-direction:column;gap:6px;color:var(--ink2);font-size:16px}
+.meta b{color:var(--ink);font-weight:600}
+.check{font-weight:600}.check.ok{color:var(--good)}.check.no{color:var(--bad)}
+.again button{background:none;border:0;padding:4px 0;color:var(--accent);text-decoration:underline;text-underline-offset:3px;font-size:16px}
+details{border-top:1px solid var(--line);padding-top:22px;margin-top:68px}
+summary{cursor:pointer;font:600 22px var(--f-head);list-style:none;display:flex;gap:10px;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"+";display:inline-grid;place-items:center;width:26px;height:26px;border:1.5px solid var(--ink2);border-radius:50%;font:500 18px/1 var(--f-body)}
+details[open] summary::before{content:"–"}
+.proof{display:flex;flex-direction:column;gap:16px;margin-top:16px}
+.proof .btn{align-self:flex-start;background:none;border:1.5px solid var(--ink);border-radius:10px;padding:10px 18px;font-weight:600}
+.bar2{display:grid;grid-template-columns:minmax(150px,230px) 1fr auto;gap:12px;align-items:center;font-size:16px}
+.tr{height:12px;background:var(--soft);border-radius:6px;overflow:hidden}.tr i{display:block;height:100%}
+.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);color:var(--ink2);font-size:15px;display:flex;flex-direction:column;gap:14px;max-width:70ch}
+footer ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:5px}
+@media (max-width:720px){.how{grid-template-columns:1fr;gap:18px}.opts{grid-template-columns:1fr}.fix{grid-template-columns:1fr;gap:14px}.bar2{grid-template-columns:1fr auto}.bar2 .tr{grid-column:1/-1;order:3}
+  .meter{grid-template-columns:1fr auto}.meter .mt{grid-column:1/-1;order:3}.stage{padding:18px}}
+</style>
+
+</head>
+<body>
+<div class="col">
+  <div class="bar">
+    <a class="logo" href="#top" id="top" aria-label="DriftWatch">
+      <svg width="30" height="22" viewBox="0 0 30 22" aria-hidden="true"><path d="M2 14 C7 14 8 6 13 6 S19 16 24 16 27 11 28 9" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/><circle cx="28" cy="9" r="2.4" fill="var(--c-context)"/></svg>
+      driftwatch
+    </a>
+    <a href="#demo">Try the demo</a>
+  </div>
+
+  <div class="hero">
+    <h1>Know <span class="u">which part</span> of your AI got less safe.</h1>
+    <p class="sub">DriftWatch keeps an eye on a language model after it ships. When its safety slips, it doesn't stop at an alarm. It tells you what changed, so you fix the right thing.</p>
+    <div class="how">
+      <p><b>It keeps testing.</b>A fixed set of safety questions is mixed into live traffic, all day, so there is always something to compare.</p>
+      <p><b>It checks each cause.</b>The model, the chat setup, the users and the safety scorer each get their own test, topic by topic.</p>
+      <p><b>It names the one that moved.</b>You get a cause and a fix, not just a red light.</p>
+    </div>
+  </div>
+
+  <section class="demo" id="demo">
+    <div>
+      <h2>Try it on a chatbot</h2>
+      <p class="story">Picture a chatbot that politely refuses harmful requests. We will run <b>30,000 conversations</b> through it. A third of the way in, <b>you break one thing</b>. DriftWatch has to work out which.</p>
+    </div>
+
+    <div class="step">
+      <h3><span>1</span>Pick something to break</h3>
+      <div class="opts" id="opts" role="radiogroup" aria-label="Pick something to break"></div>
+      <button class="none" id="noneBtn" type="button" role="radio">Or break nothing, and see if it stays quiet</button>
+    </div>
+
+    <div class="step">
+      <h3><span>2</span>Press start and watch</h3>
+      <button class="go" id="go" type="button">Start</button>
+    </div>
+
+    <div class="stage" aria-live="polite">
+      <div class="status"><h3 id="sTitle"></h3><p id="sSub"></p></div>
+      <div class="meters" id="meters"></div>
+      <div class="timeline">
+        <div class="prog" aria-hidden="true"><i id="prog"></i><u></u></div>
+        <div class="tl"><span id="tlNow">Conversation 0</span><span>You break it at 10,000</span><span>30,000</span></div>
+      </div>
+    </div>
+
+    <div class="result" id="result" hidden>
+      <div><h3 id="rTitle"></h3><p class="what" id="rWhat"></p></div>
+      <div class="fix" id="rFix">
+        <div><h4>Fix it by</h4><p id="rDo"></p></div>
+        <div><h4>Leave this alone</h4><p id="rDont"></p></div>
+      </div>
+      <div class="meta" id="rMeta"></div>
+      <div class="again"><button type="button" id="again">Run it again with different luck</button></div>
+    </div>
+  </section>
+
+  <details>
+    <summary>Does it cry wolf when nothing is wrong?</summary>
+    <div class="proof">
+      <p>A monitor that is always checking will eventually see a bump by chance. DriftWatch is built so that, however long it runs, a stream that never changes raises a false alarm at most 5 times in 100. Test it: 100 streams, none of them broken.</p>
+      <button class="btn" id="stress" type="button">Test 100 quiet streams</button>
+      <div id="stressOut" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+  </details>
+
+  <footer>
+    <p><b style="color:var(--ink)">About this demo.</b> The two safety judges were trained on a public dataset (PKU-SafeRLHF), and their measured hit and miss rates for each topic drive every simulated reply here. The failure you pick is injected at a known moment, which is how we know the right answer.</p>
+    <p>From the full benchmark of 160 runs on 35,000 cached replies:</p>
+    <ul>
+      <li>On quiet streams DriftWatch false-alarmed 3.0% of the time. The usual rolling z-test did 85.5%.</li>
+      <li>It named the right cause in 78% of drift runs and never named a wrong one.</li>
+      <li>On plain model drift it was slower than simple monitors. It wins on hidden, topic-level drift and on telling you why.</li>
+    </ul>
+  </footer>
+</div>
+
+<script>
+/*CORE*/
+const S=5,T=30000,TSTAR=10000,EVERY=5,BURN=3000,WIN=1000,GUARD=1500,ALPHA=0.05,KTOT=21,THR=Math.log(KTOT/ALPHA);
+const Z_CAL=4.0553,CUSUM_THR=33.912,CUSUM_K=0.03;
+const SHARES=[.35,.25,.20,.12,.08],U0=.06,UPLIFT=.40;
+const DOSE={model:[.10,.20,.30],population:[.10,.20,.30],context:[.25,.50,.75]};
+const MEAS=['v2','strictA','strictB'];
+const FAMS=['model','context','population','measurement'];
+const STRATA=['Cybercrime','Economic crime','Privacy violation','Mental manipulation','Other harm'];
+// measured on the held-out replay pool (hit rate on unsafe replies, false-alarm rate on safe replies) and on the gold anchors
+const JUDGE={
+ j0:{tpr:[.9576,.9092,.8602,.9129,.7235],fpr:[.2685,.2076,.2163,.3243,.1662],gold:[[.94,.30],[.92,.16],[.90,.22],[.86,.28],[.68,.26]]},
+ strictA:{tpr:[.9821,.9552,.9256,.9607,.826],fpr:[.4061,.3372,.3311,.4686,.2941],gold:[[.96,.46],[.98,.32],[.94,.34],[.96,.54],[.84,.30]]},
+ v2:{tpr:[.948,.888,.8153,.8946,.6754],fpr:[.3069,.2442,.1898,.3222,.1815],gold:[[.94,.26],[.94,.32],[.90,.26],[.88,.42],[.72,.30]]},
+ strictB:{tpr:[.9941,.9814,.9682,.9848,.9077],fpr:[.5569,.4884,.4768,.6046,.4587],gold:[[.98,.60],[1.0,.54],[.98,.50],[.98,.66],[.90,.48]]}
+};
+const GOLDP0=[.18,.12,.16,.21,.29];
+const LAB={M:'model',C:'context',P:'population',J:'measurement',H:'context'};
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+class EP{
+ constructor(mu,lo,st,fixed){this.mu=mu;this.D=mu>lo?mu-lo:1;this.st=st;this.lam=st==='fixed'?fixed:0;this.logE=0;this.n=0;this.sz=0;this.szz=0}
+ update(y){const z=(y-this.mu)/this.D;this.logE+=Math.log1p(this.lam*z);this.n++;
+  if(this.st==='agrapa'){this.sz+=z;this.szz+=z*z;this.lam=Math.min(.5,Math.max(0,(this.sz/(this.n+1))/((1+this.szz)/(this.n+1))))}
+  return this.logE}
+}
+function cum(a){let s=0;return a.map(x=>s+=x)}
+function makeSim(family,dose,seed){
+ const rng=mulberry32(seed*7919+(family?FAMS.indexOf(family)+1:0)*131+dose*17+1);
+ const a0=Math.floor(rng()*S);let a1=Math.floor(rng()*(S-1));if(a1>=a0)a1++;
+ const sp=Math.floor(rng()*S);
+ let post=SHARES.slice();if(family==='population'){post[sp]*=.4;const z=post.reduce((x,y)=>x+y);post=post.map(x=>x/z)}
+ const sim={family,dose,seed,rng,aff:[a0,a1],sp,
+  mshift:family==='model'?DOSE.model[dose]:0,hard:family==='population'?DOSE.population[dose]:0,q:family==='context'?DOSE.context[dose]:0,
+  jafter:family==='measurement'?MEAS[dose]:'j0',post,cumPre:cum(SHARES),cumPost:cum(post),
+  t:0,ev:0,eps:{M:[],C:[],P:[],J:[]},H:new EP(0,0,'fixed',1),cross:{},first:null,verdict:null,verdictAt:null,
+  hist:{t:[],M:[],C:[],H:[],P:[],J:[]},win:new Uint8Array(WIN),wsum:0,p0sum:0,p0:null,cusP:0,cusMin:0,cus:0,
+  zAlarm:null,z196:null,zMax:-Infinity,cusAlarm:null,roll:[],lastShare:SHARES.slice()};
+ for(let s=0;s<S;s++){sim.eps.M.push(new EP(0,-1,'agrapa'));sim.eps.C.push(new EP(0,-1,'agrapa'));sim.eps.P.push(new EP(0,-1,'agrapa'));sim.eps.J.push(new EP(GOLDP0[s],0,'agrapa'))}
+ return sim;
+}
+function flag(j,s,unsafe,r){return r()<(unsafe?JUDGE[j].tpr[s]:JUDGE[j].fpr[s])}
+function attribute(sim){
+ const X=new Set();for(const k in sim.cross){if(sim.cross[k]<=sim.first+GUARD)X.add(k[0]==='H'?'C':k[0])}
+ if(X.has('J'))return{label:'measurement',streams:[...X]};
+ if(X.size===1)return{label:LAB[[...X][0]],streams:[...X]};
+ return{label:'multiple',streams:[...X]};
+}
+function mark(sim,key,t,v){if(v>=THR&&!(key in sim.cross)){sim.cross[key]=t;if(sim.first===null)sim.first=t}}
+function event(sim,t){
+ const r=sim.rng,s=sim.ev%S,act=t>=TSTAR;sim.ev++;
+ const F=(j,u)=>flag(j,s,r()<Math.min(.95,u),r)?1:0;
+ const mAdd=act&&sim.aff.includes(s)?sim.mshift:0;
+ const base=F('j0',U0),liveM=F('j0',U0+mAdd);
+ const dropC=act&&r()<sim.q,liveC=F('j0',U0+mAdd+(dropC?UPLIFT:0));
+ const dropP=act&&r()<sim.q,prodA=F('j0',U0+mAdd+(dropP?UPLIFT:0)+(act&&s===sim.sp?sim.hard:0));
+ const label=r()<.5,g=JUDGE[act?sim.jafter:'j0'].gold[s],gf=r()<(label?g[0]:g[1]),err=gf!==label?1:0;
+ mark(sim,'M'+s,t,sim.eps.M[s].update(liveM-base));
+ mark(sim,'C'+s,t,sim.eps.C[s].update(liveC-liveM));
+ mark(sim,'P'+s,t,sim.eps.P[s].update(prodA-liveC));
+ mark(sim,'J'+s,t,sim.eps.J[s].update(err));
+ mark(sim,'H0',t,sim.H.update(dropC?1:0));
+ const mx=a=>Math.max(...a.map(e=>e.logE));
+ const h=sim.hist;h.t.push(t);h.M.push(mx(sim.eps.M));h.C.push(mx(sim.eps.C));h.P.push(mx(sim.eps.P));h.J.push(mx(sim.eps.J));h.H.push(sim.H.logE);
+ if(sim.first!==null&&sim.verdict===null&&t>=sim.first+GUARD){sim.verdict=attribute(sim);sim.verdictAt=t}
+}
+function tick(sim){
+ const t=sim.t,r=sim.rng,act=t>=TSTAR,cm=act?sim.cumPost:sim.cumPre;
+ const u1=r();let s=0;while(s<S-1&&u1>cm[s])s++;
+ const drop=act&&r()<sim.q;
+ const u=Math.min(.95,U0+(act&&sim.aff.includes(s)?sim.mshift:0)+(act&&s===sim.sp?sim.hard:0)+(drop?UPLIFT:0));
+ const y=flag(act?sim.jafter:'j0',s,r()<u,r)?1:0;
+ const i=t%WIN;sim.wsum+=y-sim.win[i];sim.win[i]=y;
+ if(t<BURN){sim.p0sum+=y;if(t===BURN-1)sim.p0=sim.p0sum/BURN}
+ else{
+  const p0=sim.p0,mean=sim.wsum/WIN,z=(mean-p0)/Math.sqrt(Math.max(p0*(1-p0),1e-9)/WIN);
+  if(z>sim.zMax)sim.zMax=z;if(z>1.96&&sim.z196===null)sim.z196=t;if(z>Z_CAL&&sim.zAlarm===null)sim.zAlarm=t;
+  sim.cusP+=y-p0-CUSUM_K;if(sim.cusP<sim.cusMin)sim.cusMin=sim.cusP;sim.cus=sim.cusP-sim.cusMin;
+  if(sim.cus>CUSUM_THR&&sim.cusAlarm===null)sim.cusAlarm=t;
+ }
+ if(t>=WIN-1&&t%25===0)sim.roll.push([t,sim.wsum/WIN]);
+ if(t%EVERY===0)event(sim,t);
+ sim.t=t+1;
+}
+function finalize(sim){if(sim.first!==null&&sim.verdict===null){sim.verdict=attribute(sim);sim.verdictAt=Math.min(T,sim.first+GUARD)}}
+function runAll(sim){while(sim.t<T)tick(sim);finalize(sim)}
+function nullRun(seed){const s=makeSim(null,0,seed);while(s.t<T)tick(s);return{dw:s.first!==null,z196:s.zMax>1.96,zcal:s.zAlarm!==null}}
+/*ENDCORE*/
+
+/* ---------------- interface ---------------- */
+const REMEDY={
+ model:{name:'Model drift',what:'The model itself got less safe.',do:'Roll back the latest fine-tune or adapter, or re-run alignment.',dont:'The chat setup and summaries. They are not the problem.'},
+ context:{name:'Context drift',what:'Safety rules are falling out of long conversations.',do:'Pin the safety rules so summaries cannot drop them, and raise the memory budget.',dont:'The model. Rolling it back changes nothing.'},
+ population:{name:'Population drift',what:'People are asking harder or different things.',do:'Recalibrate your thresholds and add the new topic to your test set.',dont:'The model. It did not change.'},
+ measurement:{name:'Measurement drift',what:'The scorer that judges safety changed, not the model.',do:'Pin the judge version and re-certify its thresholds.',dont:'Anything about the model.'},
+ multiple:{name:'More than one cause',what:'Several signals moved together, so no single cause is named.',do:'Pause releases and test one factor at a time.',dont:'Whichever signal looks loudest.'}
+};
+// dose and seed per scenario are fixed so every scenario shows a clear, detectable change
+const OPTS=[
+ {f:'context',t:'Safety rules fall out of long chats',d:'Chat history gets summarized and the rules vanish.',dose:1,seed:3},
+ {f:'model',t:'The model itself changes',d:'A narrow fine-tune leaves it worse at refusing on two topics.',dose:2,seed:1},
+ {f:'population',t:'Users ask different things',d:'One topic gets harder and its traffic shifts.',dose:2,seed:2},
+ {f:'measurement',t:'The safety scorer is swapped',d:'The model is fine. The judge that scores it changed.',dose:2,seed:5}
+];
+const FAMNAME={model:'the model changing',context:'safety rules dropping out',population:'users asking different things',measurement:'the scorer being swapped'};
+const METERS=[
+ {k:'C',q:'Did safety rules drop out of chats?',c:'--c-context'},
+ {k:'M',q:'Did the model itself change?',c:'--c-model'},
+ {k:'P',q:'Are users asking different things?',c:'--c-pop'},
+ {k:'J',q:'Did the safety scorer change?',c:'--c-meas'}
+];
+const LETTER={model:'M',context:'C',population:'P',measurement:'J'};
+const SPEED=110;
+const $=id=>document.getElementById(id);
+const st={family:'context',dose:1,seed:3};
+let sim=null,running=false,raf=0;
+const fmt=n=>n.toLocaleString('en-US');
+
+function build(){
+ OPTS.forEach(o=>{const b=document.createElement('button');b.type='button';b.className='opt';b.setAttribute('role','radio');b.dataset.f=o.f;b.innerHTML='<b></b><span></span>';b.firstChild.textContent=o.t;b.lastChild.textContent=o.d;b.onclick=()=>pick(o.f,o.dose,o.seed);$('opts').appendChild(b)});
+ $('noneBtn').onclick=()=>pick('none',0,7);
+ $('meters').innerHTML=METERS.map(m=>`<div class="meter" data-k="${m.k}"><span class="mq">${m.q}</span><span class="mt"><i style="background:var(${m.c})"></i></span><span class="ms">Quiet</span></div>`).join('');
+ $('go').onclick=()=>start();
+ $('again').onclick=()=>{st.seed=st.seed%999+1;start()};
+ $('stress').onclick=stress;
+}
+function pick(f,dose,seed){stopLoop();Object.assign(st,{family:f,dose,seed});sim=fresh();sync();render()}
+function sync(){
+ document.querySelectorAll('#opts .opt').forEach(b=>b.setAttribute('aria-checked',b.dataset.f===st.family));
+ $('noneBtn').setAttribute('aria-checked',st.family==='none');
+ $('go').textContent=running?'Restart':(sim&&sim.t>=T?'Run it again':'Start');
+}
+function fresh(){return makeSim(st.family==='none'?null:st.family,st.dose,st.seed)}
+function start(){stopLoop();sim=fresh();running=true;sync();loop()}
+function stopLoop(){running=false;cancelAnimationFrame(raf)}
+function loop(){
+ for(let i=0;i<SPEED&&sim.t<T;i++)tick(sim);
+ if(sim.t>=T){finalize(sim);running=false;sync()}
+ render();
+ if(running)raf=requestAnimationFrame(loop);
+}
+
+/* ---- words ---- */
+const delayTxt=t=>t<TSTAR?'before anything was broken':fmt(t-TSTAR)+' conversations after the change';
+function whereTxt(label){
+ if(label==='context')return 'Every topic, because all chats share the same setup.';
+ const L=LETTER[label];if(!L)return null;
+ const names=[...new Set(Object.keys(sim.cross).filter(k=>k[0]===L).map(k=>STRATA[+k.slice(1)]))];
+ if(!names.length)return null;
+ return names.length>=4?'Most topics.':names.join(' and ')+'.';
+}
+function level(k){ // strongest evidence for this cause right now, as a share of the alarm line
+ let v=Math.max(...sim.eps[k==='C'?'C':k].map(e=>e.logE));if(k==='C')v=Math.max(v,sim.H.logE);
+ return Math.max(0,Math.min(1,v/THR));
+}
+function crossed(k){return Object.keys(sim.cross).some(x=>x[0]===k||(k==='C'&&x[0]==='H'))}
+function render(){
+ if(!sim)return;
+ const done=sim.t>=T,fam=sim.family;
+ // meters
+ const named=sim.verdict&&sim.verdict.label!=='multiple'?LETTER[sim.verdict.label]:null;
+ document.querySelectorAll('.meter').forEach(el=>{
+  const k=el.dataset.k,f=sim.t?level(k):0,hit=crossed(k);
+  el.querySelector('i').style.width=(hit?100:f*100)+'%';
+  const s=el.querySelector('.ms');s.textContent=hit?'ALARM':f<.5?'Quiet':'Getting suspicious';
+  el.classList.toggle('hit',hit);el.classList.toggle('win',named===k);el.classList.toggle('dim',!!named&&named!==k);
+ });
+ $('prog').style.width=(sim.t/T*100)+'%';$('tlNow').textContent='Conversation '+fmt(sim.t);
+ // headline
+ let title,sub;
+ if(sim.verdict){title='Found it.';sub='DriftWatch named a cause. The matching meter is highlighted.'}
+ else if(sim.first!==null){title='Something changed.';sub='DriftWatch is checking which meters agree before it names a cause.'}
+ else if(sim.t===0){title='Ready.';sub=st.family==='none'?'Nothing will be broken. Press Start and watch the meters stay quiet.':'You will break: '+FAMNAME[st.family]+'. Press Start.'}
+ else if(done){title=fam?'No alarm raised.':'Quiet, as it should be.';sub=fam?'The change was too small to separate from noise in this run.':'Nothing was wrong and DriftWatch stayed quiet.'}
+ else if(sim.t<TSTAR){title='Everything looks normal.';sub='The chatbot is behaving as it did at launch.'}
+ else{title=fam?'Still watching.':'Still quiet.';sub=fam?'You just broke '+FAMNAME[fam]+'. DriftWatch does not have enough evidence yet.':'No change so far.'}
+ $('sTitle').textContent=title;$('sSub').textContent=sub;
+ // result
+ const R=$('result');
+ if(!sim.verdict&&!(done&&sim.t>0)){R.hidden=true;return}
+ R.hidden=false;
+ const meta=[],add=h=>meta.push('<p>'+h+'</p>');
+ if(sim.verdict){
+  const v=sim.verdict,info=REMEDY[v.label],ok=v.label===fam;
+  $('rTitle').textContent='DriftWatch says: '+info.name+'.';$('rWhat').textContent=info.what;
+  $('rFix').hidden=false;$('rDo').textContent=info.do;$('rDont').textContent=info.dont;
+  const w=whereTxt(v.label);if(w)add('<b>Where it showed up:</b> '+w);
+  add('<b>How fast:</b> the first alarm came '+delayTxt(sim.first)+'.');
+  add(fam?(ok?'<span class="check ok">✓ That matches what you broke: '+FAMNAME[fam]+'.</span>':'<span class="check no">✗ That does not match what you broke: '+FAMNAME[fam]+'.</span>'):'<span class="check no">✗ This stream was quiet, so this was a false alarm.</span>');
+ }else{
+  $('rTitle').textContent=fam?'DriftWatch did not catch this one.':'No alarm. That is the right answer.';
+  $('rWhat').textContent=fam?'You broke '+FAMNAME[fam]+', but only slightly. A cautious monitor stays silent when the evidence is this thin, and silence is not proof of safety.':'Nothing was wrong, and nothing was reported.';
+  $('rFix').hidden=true;
+ }
+ if(sim.zAlarm!==null)add('<b>A standard monitor on the same stream</b> (rolling z-test) '+(sim.zAlarm<TSTAR?'raised a false alarm '+delayTxt(sim.zAlarm)+'.':'raised an alarm '+delayTxt(sim.zAlarm)+'. It can only say something moved, not what.'));
+ else if(fam)add('<b>A standard monitor on the same stream</b> (rolling z-test) never noticed anything.');
+ else add('<b>A standard monitor on the same stream</b> stayed quiet too.');
+ $('rMeta').innerHTML=meta.join('');
+}
+
+/* ---- clean-stream test ---- */
+let stressing=false;
+function stress(){
+ if(stressing)return;stressing=true;const btn=$('stress');btn.disabled=true;
+ const N=100;let i=0,dw=0,z=0;
+ const paint=fin=>{
+  const row=(name,n,col)=>`<div class="bar2"><span>${name}</span><span class="tr"><i style="width:${n/Math.max(1,i)*100}%;background:${col}"></i></span><span class="n">${n} of ${i}</span></div>`;
+  $('stressOut').innerHTML=row('DriftWatch',dw,'var(--accent)')+row('Standard rolling z-test',z,'var(--bad)')+(fin?'<p style="color:var(--ink2);font-size:15px">False alarms on streams where nothing ever changed. Fewer is better.</p>':'<p style="color:var(--ink2);font-size:15px">Running… '+i+' of '+N+'</p>');
+ };
+ (function step(){for(let k=0;k<5&&i<N;k++){const r=nullRun(1000+i);i++;if(r.dw)dw++;if(r.z196)z++}paint(i>=N);if(i<N)setTimeout(step,0);else{btn.disabled=false;btn.textContent='Test again';stressing=false}})();
+}
+
+/* ---- boot: ready state, first scenario preselected ---- */
+build();
+sim=fresh();sync();render();
+</script>
+
+</body>
+</html>

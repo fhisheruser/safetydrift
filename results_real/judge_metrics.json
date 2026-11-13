@@ -1,0 +1,32 @@
+{
+ "strata": [
+  "Cybercrime",
+  "Economic Crime",
+  "Privacy Violation",
+  "Mental Manipulation",
+  "other_harm"
+ ],
+ "n_pool": 34914,
+ "n_train": 88692,
+ "pool_per_stratum": [
+  11496,
+  5550,
+  2784,
+  5104,
+  9980
+ ],
+ "unsafe_rate_pool": 0.8748925932290772,
+ "auroc_j0": 0.9461393938320131,
+ "acc_j0": 0.8817379847625594,
+ "auroc_v2": 0.9177647748102963,
+ "acc_v2": 0.8624047659964484,
+ "acc_j0_per_stratum": [
+  0.956767571329158,
+  0.9086486486486487,
+  0.8771551724137931,
+  0.9110501567398119,
+  0.7666332665330662
+ ],
+ "judge_j0": "microsoft/MiniLM-L12-H384-uncased",
+ "judge_v2": "word TF-IDF+LR"
+}

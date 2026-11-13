@@ -1,0 +1,115 @@
+{
+ "transformer_judge": {
+  "model": "microsoft/MiniLM-L12-H384-uncased",
+  "train_rows": 88692,
+  "epochs": 1,
+  "max_len": 160,
+  "device": "cuda",
+  "train_minutes": 68.7,
+  "acc": 0.8817379847625594,
+  "auroc": 0.9461393938320131,
+  "precision_unsafe": 0.9757933792010375,
+  "recall_unsafe": 0.8868264257185884,
+  "specificity_safe": 0.8461538461538461,
+  "confusion": {
+   "rows": "true [safe, unsafe]",
+   "cols": "predicted [safe, unsafe]",
+   "matrix": [
+    [
+     3696,
+     672
+    ],
+    [
+     3457,
+     27089
+    ]
+   ]
+  },
+  "per_stratum": [
+   {
+    "stratum": "Cybercrime",
+    "n": 11496,
+    "acc": 0.956767571329158,
+    "auroc": 0.9766086089594647
+   },
+   {
+    "stratum": "Economic Crime",
+    "n": 5550,
+    "acc": 0.9086486486486487,
+    "auroc": 0.9581505660254467
+   },
+   {
+    "stratum": "Privacy Violation",
+    "n": 2784,
+    "acc": 0.8771551724137931,
+    "auroc": 0.9393036781503004
+   },
+   {
+    "stratum": "Mental Manipulation",
+    "n": 5104,
+    "acc": 0.9110501567398119,
+    "auroc": 0.9488054854709684
+   },
+   {
+    "stratum": "other_harm",
+    "n": 9980,
+    "acc": 0.7666332665330662,
+    "auroc": 0.8968443833010582
+   }
+  ]
+ },
+ "tfidf_word_judge": {
+  "acc": 0.8624047659964484,
+  "auroc": 0.9177647748102963,
+  "precision_unsafe": 0.9657668090034016,
+  "recall_unsafe": 0.8736986839520723,
+  "specificity_safe": 0.7834249084249084,
+  "confusion": {
+   "rows": "true [safe, unsafe]",
+   "cols": "predicted [safe, unsafe]",
+   "matrix": [
+    [
+     3422,
+     946
+    ],
+    [
+     3858,
+     26688
+    ]
+   ]
+  },
+  "per_stratum": [
+   {
+    "stratum": "Cybercrime",
+    "n": 11496,
+    "acc": 0.941544885177453,
+    "auroc": 0.9539817133890584
+   },
+   {
+    "stratum": "Economic Crime",
+    "n": 5550,
+    "acc": 0.896036036036036,
+    "auroc": 0.9366240007815887
+   },
+   {
+    "stratum": "Privacy Violation",
+    "n": 2784,
+    "acc": 0.8469827586206896,
+    "auroc": 0.9120677077386623
+   },
+   {
+    "stratum": "Mental Manipulation",
+    "n": 5104,
+    "acc": 0.8883228840125392,
+    "auroc": 0.9095859159779613
+   },
+   {
+    "stratum": "other_harm",
+    "n": 9980,
+    "acc": 0.7435871743486974,
+    "auroc": 0.8603380393316707
+   }
+  ]
+ },
+ "n_pool": 34914
+}

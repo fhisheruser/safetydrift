@@ -1,0 +1,5 @@
+__pycache__/
+.venv/
+data/pku_train.parquet
+data/judge_minilm/
+*.stdout

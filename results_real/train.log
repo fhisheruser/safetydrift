@@ -1,0 +1,32 @@
+11:38:33 device cuda model microsoft/MiniLM-L12-H384-uncased
+11:38:50 train rows 88692  pool rows 34914
+11:39:58 step 100/2772 loss 0.5841 elapsed 0.9m eta 23.1m
+11:40:54 step 200/2772 loss 0.4576 elapsed 1.8m eta 23.0m
+11:41:56 step 300/2772 loss 0.3838 elapsed 2.8m eta 23.2m
+11:42:53 step 400/2772 loss 0.3319 elapsed 3.8m eta 22.4m
+11:44:14 step 500/2772 loss 0.2999 elapsed 5.1m eta 23.3m
+11:45:42 step 600/2772 loss 0.2996 elapsed 6.6m eta 23.9m
+11:47:15 step 700/2772 loss 0.3047 elapsed 8.1m eta 24.1m
+11:49:35 step 800/2772 loss 0.2851 elapsed 10.5m eta 25.8m
+11:51:15 step 900/2772 loss 0.2774 elapsed 12.1m eta 25.3m
+11:53:52 step 1000/2772 loss 0.2705 elapsed 14.8m eta 26.2m
+11:55:45 step 1100/2772 loss 0.2895 elapsed 16.6m eta 25.3m
+11:59:02 step 1200/2772 loss 0.2610 elapsed 19.9m eta 26.1m
+12:00:45 step 1300/2772 loss 0.2566 elapsed 21.6m eta 24.5m
+12:02:36 step 1400/2772 loss 0.2459 elapsed 23.5m eta 23.0m
+12:04:06 step 1500/2772 loss 0.2448 elapsed 25.0m eta 21.2m
+12:05:36 step 1600/2772 loss 0.2429 elapsed 26.5m eta 19.4m
+12:07:57 step 1700/2772 loss 0.2539 elapsed 28.8m eta 18.2m
+12:10:09 step 1800/2772 loss 0.2372 elapsed 31.0m eta 16.8m
+12:12:58 step 1900/2772 loss 0.2396 elapsed 33.9m eta 15.5m
+12:14:38 step 2000/2772 loss 0.2317 elapsed 35.5m eta 13.7m
+12:16:08 step 2100/2772 loss 0.2135 elapsed 37.0m eta 11.8m
+12:18:01 step 2200/2772 loss 0.2122 elapsed 38.9m eta 10.1m
+12:19:48 step 2300/2772 loss 0.2135 elapsed 40.7m eta 8.3m
+12:20:46 step 2400/2772 loss 0.2178 elapsed 41.7m eta 6.5m
+12:22:55 step 2500/2772 loss 0.2387 elapsed 43.8m eta 4.8m
+12:24:27 step 2600/2772 loss 0.2148 elapsed 45.3m eta 3.0m
+12:27:54 step 2700/2772 loss 0.1974 elapsed 48.8m eta 1.3m
+12:29:04 step 2772/2772 loss 0.2047 elapsed 50.0m eta 0.0m
+12:29:05 scoring pool
+12:47:49 done {"acc": 0.8817379847625594, "auroc": 0.9461393938320131, "confusion": {"rows": "true [safe, unsafe]", "cols": "predicted [safe, unsafe]", "matrix": [[3696, 672], [3457, 27089]]}}
